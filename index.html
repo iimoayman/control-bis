@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فلو تشارت دورة عمل كنترول الامتحانات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --central:#312e81; /* كحلي نيلي داكن لرئيس الكنترول المركزي */
+  --prog:#1d4ed8;    /* أزرق لرئيس كنترول البرنامج */
+  --head:#1e40af;    /* أزرق أساسي للإدارة */
+  --it:#0d9488;      /* تركواز لفريق IT (الداتا بيز + السحب الضوئي والريمارك) */
+  --stamp:#0284c7;   /* أزرق سماوي للتختيم والتظريف */
+  --deliv:#ea580c;   /* برتقالي للتسليم والتسلم */
+  --ok:#15803d;      /* أخضر للاعتماد والنتائج النهائية */
+  --dec:#eab308;     /* أصفر ذهبي لنقاط القرار والمطابقة */
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#94a3b8;
+  --bg:#f8fafc;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Cairo",system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 500px at 85% -10%,#e0e7ff 0,transparent 60%),
+    radial-gradient(900px 500px at 0% 10%,#f0fdf4 0,transparent 55%),
+    var(--bg);
+  min-height:100vh;
+}
+header.top{
+  background:linear-gradient(135deg,#0a192f 0%,#1e1b4b 50%,#312e81 100%);
+  color:#fff;
+  padding:36px 20px 75px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+header.top::after{
+  content:"";
+  position:absolute;
+  inset:auto -10% -60px -10%;
+  height:120px;
+  background:var(--bg);
+  border-radius:50% 50% 0 0;
+}
+header.top h1{
+  margin:0;
+  font-size:clamp(24px,4vw,38px);
+  font-weight:900;
+  letter-spacing:.2px;
+}
+header.top p{
+  margin:10px auto 0;
+  max-width:760px;
+  opacity:.9;
+  font-size:15px;
+  line-height:1.6;
+}
+.dots{
+  position:absolute;
+  inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.12) 1.5px,transparent 1.5px);
+  background-size:22px 22px;
+  pointer-events:none;
+}
+
+nav.tabs{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin:-44px auto 0;
+  position:relative;
+  z-index:2;
+  padding:0 12px;
+}
+nav.tabs a{
+  --a:#334155;
+  text-decoration:none;
+  color:var(--a);
+  background:#fff;
+  border-radius:16px;
+  padding:10px 18px;
+  font-weight:800;
+  font-size:15px;
+  box-shadow:0 6px 20px rgba(15,23,42,.08);
+  border:2px solid transparent;
+  transition:.2s;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+nav.tabs a .code{
+  font-size:11px;
+  background:color-mix(in srgb,var(--a) 12%,#fff);
+  padding:2px 8px;
+  border-radius:99px;
+  letter-spacing:.5px;
+}
+nav.tabs a:hover{transform:translateY(-2px)}
+nav.tabs a.active{background:var(--a);color:#fff;border-color:var(--a)}
+nav.tabs a.active .code{background:rgba(255,255,255,.2);color:#fff}
+
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px 18px;
+  margin:24px auto 8px;
+  max-width:1100px;
+  padding:0 12px;
+  font-size:13px;
+  color:#334155;
+  font-weight:700;
+}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:15px;height:15px;border-radius:4px;background:var(--c);display:inline-block}
+.legend i.dia{transform:rotate(45deg);border-radius:2px;width:12px;height:12px}
+
+main{max-width:1100px;margin:0 auto;padding:10px 14px 60px}
+.view{display:none}
+.view.show{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.prog{
+  --p:var(--central);
+  background:linear-gradient(120deg,var(--p),color-mix(in srgb,var(--p) 60%,#0f172a));
+  color:#fff;
+  border-radius:24px;
+  padding:22px 28px;
+  margin:18px auto 28px;
+  max-width:820px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  box-shadow:0 18px 40px color-mix(in srgb,var(--p) 30%,transparent);
+  position:relative;
+  overflow:hidden;
+}
+.prog::before{
+  content:"";
+  position:absolute;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  left:-70px;
+  top:-90px;
+}
+.prog h2{margin:0;font-size:24px;font-weight:900}
+.prog .sub{opacity:.9;font-size:13.5px;margin-top:4px}
+.prog .chief{
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:16px;
+  padding:10px 18px;
+  text-align:center;
+  backdrop-filter:blur(4px);
+  position:relative;
+  white-space:nowrap;
+}
+.prog .chief small{display:block;opacity:.85;font-size:12px;font-weight:600}
+.prog .chief b{font-size:16px}
+
+.flow{display:flex;flex-direction:column;align-items:center}
+.node{
+  --c:var(--head);
+  width:min(660px,100%);
+  background:#fff;
+  border-radius:20px;
+  padding:16px 20px 18px;
+  box-shadow:0 10px 28px rgba(15,23,42,.07),0 1px 0 rgba(15,23,42,.04);
+  border-inline-start:8px solid var(--c);
+  position:relative;
+}
+.node .hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{
+  width:36px;
+  height:36px;
+  flex:none;
+  border-radius:12px;
+  background:var(--c);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:15px;
+  box-shadow:0 6px 14px color-mix(in srgb,var(--c) 40%,transparent);
+}
+.team{
+  font-size:12.5px;
+  color:var(--c);
+  background:color-mix(in srgb,var(--c) 12%,#fff);
+  padding:3px 12px;
+  border-radius:99px;
+  font-weight:800;
+}
+.title{
+  font-weight:800;
+  font-size:17.5px;
+  flex-basis:100%;
+  margin-top:6px;
+  line-height:1.5;
+  color:#0f172a;
+}
+.tasks{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.tasks li{
+  font-size:14px;
+  color:#334155;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  line-height:1.65;
+}
+.tasks:not(.numbered) li::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--c);
+  margin-top:8px;
+  flex:none;
+}
+.tasks.numbered{counter-reset:step}
+.tasks.numbered li{counter-increment:step}
+.tasks.numbered li::before{
+  content:counter(step);
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:color-mix(in srgb,var(--c) 14%,#fff);
+  border:1.5px solid var(--c);
+  color:var(--c);
+  font-weight:900;
+  font-size:11.5px;
+  display:grid;
+  place-items:center;
+  flex:none;
+  margin-top:2px;
+}
+
+.terminal{
+  width:auto;
+  min-width:300px;
+  border-radius:99px;
+  border:none;
+  text-align:center;
+  color:#fff;
+  padding:15px 36px;
+  font-weight:900;
+  font-size:18px;
+  box-shadow:0 14px 30px color-mix(in srgb,var(--c) 35%,transparent);
+  background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 65%,#0f172a));
+}
+.terminal small{display:block;font-weight:600;font-size:13px;opacity:.9;margin-top:2px}
+.milestone{
+  width:auto;
+  min-width:280px;
+  border-inline-start:none;
+  border:2px dashed #cbd5e1;
+  background:#fff;
+  color:#334155;
+  text-align:center;
+  font-weight:900;
+  font-size:16px;
+  padding:12px 28px;
+  border-radius:16px;
+}
+.milestone small{display:block;font-weight:600;font-size:12.5px;color:#64748b;margin-top:2px}
+
+.arrow{width:3px;height:36px;background:var(--line);position:relative;flex:none}
+.arrow::after{
+  content:"";
+  position:absolute;
+  bottom:-1px;
+  left:50%;
+  transform:translateX(-50%);
+  border:7px solid transparent;
+  border-top:9px solid var(--line);
+  border-bottom:0;
+}
+.arrow.short{height:22px}
+.arrow[data-l]::before{
+  content:attr(data-l);
+  position:absolute;
+  top:50%;
+  transform:translateY(-55%);
+  right:14px;
+  white-space:nowrap;
+  font-size:12px;
+  font-weight:800;
+  color:var(--ok);
+  background:#dcfce7;
+  padding:2px 11px;
+  border-radius:99px;
+  border:1px solid #bbf7d0;
+}
+
+.bus{height:3px;background:var(--line);width:76%;flex:none}
+.split{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;max-width:820px}
+.branch{display:flex;flex-direction:column;align-items:center}
+.branch .node{width:100%}
+.branch .tail{flex:1;min-height:20px;width:3px;background:var(--line)}
+.branch .stub{width:3px;height:22px;background:var(--line);position:relative}
+.branch .stub::after{
+  content:"";
+  position:absolute;
+  bottom:-1px;
+  left:50%;
+  transform:translateX(-50%);
+  border:6px solid transparent;
+  border-top:8px solid var(--line);
+  border-bottom:0;
+}
+.mini{padding:14px 16px}
+.mini .title{font-size:15px;margin-bottom:6px}
+.steps{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:0;counter-reset:mstep}
+.steps li{
+  position:relative;
+  font-size:13px;
+  font-weight:700;
+  color:#1e293b;
+  background:color-mix(in srgb,var(--c) 7%,#fff);
+  border:1px solid color-mix(in srgb,var(--c) 22%,#fff);
+  border-radius:10px;
+  padding:7px 10px;
+  margin-bottom:14px;
+  text-align:right;
+  line-height:1.5;
+  display:flex;
+  align-items:flex-start;
+  gap:7px;
+}
+.steps li::before{
+  content:counter(mstep);
+  counter-increment:mstep;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--c);
+  color:#fff;
+  font-size:10.5px;
+  font-weight:900;
+  display:grid;
+  place-items:center;
+  flex:none;
+  margin-top:1px;
+}
+.steps li:not(:last-child)::after{
+  content:"▼";
+  position:absolute;
+  bottom:-14px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:9px;
+  color:var(--c);
+  line-height:14px;
+}
+.steps li:last-child{margin-bottom:0}
+.steps li.out{background:var(--c);color:#fff;border-color:var(--c)}
+.steps li.out::before{background:#fff;color:var(--c)}
+
+.decision{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:100%;max-width:820px;gap:0}
+.diamond{width:160px;height:160px;display:grid;place-items:center;position:relative;margin:4px 0}
+.diamond::before{
+  content:"";
+  position:absolute;
+  inset:24px;
+  background:linear-gradient(135deg,#fde047,var(--dec));
+  transform:rotate(45deg);
+  border-radius:14px;
+  box-shadow:0 10px 24px rgba(234,179,8,.35);
+}
+.diamond span{
+  position:relative;
+  font-weight:900;
+  font-size:13.5px;
+  text-align:center;
+  line-height:1.45;
+  color:#422006;
+  max-width:100px;
+}
+.nopath{display:flex;align-items:center;justify-self:start}
+.nopath .hline{width:36px;height:3px;background:#ef4444;position:relative;flex:none}
+.nopath .hline::after{
+  content:"";
+  position:absolute;
+  left:-2px;
+  top:50%;
+  transform:translateY(-50%);
+  border:6px solid transparent;
+  border-right:8px solid #ef4444;
+  border-left:0;
+}
+.nopath .lbl{
+  font-size:12px;
+  font-weight:900;
+  color:#b91c1c;
+  background:#fee2e2;
+  padding:2px 10px;
+  border-radius:99px;
+  margin-inline-end:6px;
+  border:1px solid #fecaca;
+}
+.nopath .box{
+  background:#fff;
+  border:2px solid #fecaca;
+  border-radius:14px;
+  padding:9px 13px;
+  font-size:13px;
+  font-weight:700;
+  color:#7f1d1d;
+  max-width:240px;
+  line-height:1.55;
+  box-shadow:0 6px 16px rgba(239,68,68,.08);
+}
+.nopath .box b{display:block;color:#b91c1c;font-size:12px;margin-bottom:2px}
+
+/* roles view */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;margin-top:24px}
+.role{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 10px 28px rgba(15,23,42,.07);border:1px solid #e2e8f0}
+.role .rh{background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 60%,#0f172a));color:#fff;padding:18px 20px}
+.role .rh h3{margin:0;font-size:19px;font-weight:900}
+.role .rh small{opacity:.9;font-size:12.5px;display:block;margin-top:3px}
+.role .rb{padding:16px 20px 20px}
+.role .rb h4{margin:4px 0 8px;font-size:13px;color:var(--muted);font-weight:800;letter-spacing:.3px}
+
+.section-title{text-align:center;margin:38px 0 6px;font-size:23px;font-weight:900;color:#0f172a}
+.section-sub{text-align:center;color:var(--muted);margin:0 0 16px;font-size:14.5px}
+
+table.matrix{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 10px 28px rgba(15,23,42,.07);
+  border:1px solid #e2e8f0;
+}
+table.matrix th{background:#0f172a;color:#fff;font-size:14px;padding:13px 14px;text-align:right;font-weight:800}
+table.matrix td{padding:12px 14px;border-top:1px solid #f1f5f9;font-size:13.5px;vertical-align:top;line-height:1.6}
+table.matrix tr:hover td{background:#f8fafc}
+table.matrix td b{font-weight:800;color:#0f172a}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  font-size:12px;
+  font-weight:800;
+  color:#fff;
+  background:var(--c);
+  border-radius:99px;
+  padding:3px 11px;
+  white-space:nowrap;
+}
+
+.notes{background:#f8fafc;border:1px solid #cbd5e1;border-radius:20px;padding:20px 24px;margin-top:28px}
+.notes h4{margin:0 0 8px;color:#1e293b;font-size:16px;font-weight:900;display:flex;align-items:center;gap:8px}
+.notes ul{margin:0;padding-inline-start:20px;color:#334155;font-size:14px;line-height:1.9}
+
+footer{text-align:center;color:#94a3b8;font-size:12.5px;padding:16px 0 34px}
+
+@media (max-width:760px){
+  .split{grid-template-columns:1fr;gap:0}
+  .bus{display:none}
+  .branch .tail{min-height:14px;flex:none;height:14px}
+  .decision{grid-template-columns:1fr;justify-items:center}
+  .decision > .sp{display:none}
+  .nopath{justify-self:center;margin-bottom:8px}
+  .prog{flex-direction:column;text-align:center}
+}
+@media print{
+  @page{size:A4 portrait;margin:8mm}
+  body{background:#fff}
+  header.top{padding:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  header.top::after,nav.tabs{display:none}
+  .view{display:block!important;break-after:page}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .node,.role{box-shadow:none;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0}
+  .flow{zoom:.74}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="dots"></div>
+  <h1>دورة عمل كنترول الامتحانات</h1>
+  <p>منظومة العمل المتكاملة من رئيس الكنترول المركزي ورؤساء كنترول البرامج حتى اعتماد وإعلان النتائج</p>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<div class="legend">
+  <span><i style="--c:var(--central)"></i>رئيس الكنترول المركزي</span>
+  <span><i style="--c:var(--prog)"></i>رئيس كنترول البرنامج</span>
+  <span><i style="--c:var(--it)"></i>فريق IT (تجهيز وسكان وريمارك)</span>
+  <span><i style="--c:var(--stamp)"></i>التختيم والتظريف</span>
+  <span><i style="--c:var(--deliv)"></i>التسليم والتسلم</span>
+  <span><i class="dia" style="--c:var(--dec)"></i>نقطة قرار ومطابقة</span>
+  <span><i style="--c:var(--ok)"></i>الاعتماد النهائي وإعلان النتيجة</span>
+</div>
+
+<main id="main"></main>
+<footer>دورة عمل كنترول الامتحانات — نظام مؤسسي كامل بدون أسماء شخصية</footer>
+
+<script>
+const PROGRAMS = [
+  {id:"bis", code:"BIS", name:"برنامج نظم المعلومات", short:"نظم المعلومات", color:"#4f46e5"},
+  {id:"ft",  code:"FT",  name:"برنامج التجارة الخارجية", short:"التجارة الخارجية", color:"#0891b2"},
+  {id:"acc", code:"ACC", name:"برنامج المحاسبة", short:"المحاسبة", color:"#be123c"}
+];
+
+function flow(p){
+  return `
+  <div class="prog" style="--p:${p.color}">
+    <div>
+      <h2>${p.name}</h2>
+      <div class="sub">كود البرنامج: ${p.code} · مسار إجرائي متكامل مرتبط بالكنترول المركزي</div>
+    </div>
+    <div class="chief">
+      <small>القيادة التنفيذية بالبرنامج</small>
+      <b>رئيس كنترول ${p.short}</b>
+    </div>
+  </div>
+
+  <div class="flow">
+    <!-- البداية -->
+    <div class="node terminal" style="--c:var(--central)">
+      بداية دورة عمل الامتحانات
+      <small>${p.name} — بالتنسيق مع الكنترول المركزي</small>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 1. رئيس الكنترول المركزي -->
+    <div class="node" style="--c:var(--central)">
+      <div class="hd">
+        <div class="badge">1</div>
+        <span class="team">رئيس الكنترول المركزي</span>
+        <div class="title">إطلاق دورة العمل والتنسيق العام والاستقبال من البرامج</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>متابعة طباعات الأسئلة والاستقبال من البرامج.</li>
+        <li>تزويد مسار الـ IT بقاعدة بيانات الطلاب (Database) الخاصة بالبرنامج.</li>
+        <li>تسليم وتوزيع جداول الامتحانات المعتمدة لرئيس كنترول البرنامج.</li>
+      </ul>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 2. رئيس كنترول البرنامج -->
+    <div class="node" style="--c:var(--prog)">
+      <div class="hd">
+        <div class="badge">2</div>
+        <span class="team">رئيس كنترول البرنامج</span>
+        <div class="title">استقبال المتطلبات من الرئيس المركزي وتجهيز الطباعة والجداول</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>استقبال أسئلة مواد البرنامج من الرئيس المركزي والتجهيز للطباعة.</li>
+        <li>استلام جداول الامتحانات من الرئيس المركزي وتنسيقها.</li>
+        <li>توزيع طلاب البرنامج إلى مجموعات ولجان وفق الجداول المعتمدة.</li>
+      </ul>
+    </div>
+    <div class="arrow short"></div>
+    <div class="bus"></div>
+
+    <!-- المسارات الثلاثة المتوازية للتجهيز -->
+    <div class="split">
+      <!-- مسار الأسئلة -->
+      <div class="branch">
+        <div class="stub"></div>
+        <div class="node mini" style="--c:var(--prog)">
+          <div class="hd">
+            <div class="badge">3</div>
+            <span class="team">رئيس كنترول البرنامج</span>
+            <div class="title">مسار الأسئلة</div>
+          </div>
+          <ul class="steps">
+            <li>استقبال أسئلة مواد البرنامج من الرئيس المركزي</li>
+            <li>تنسيق الأسئلة وتجهيزها للطباعة</li>
+            <li>طباعة ورق الأسئلة بأعداد اللجان</li>
+            <li class="out">تسليم ورق الأسئلة لفريق التختيم والتظريف</li>
+          </ul>
+        </div>
+        <div class="tail"></div>
+      </div>
+
+      <!-- مسار الجداول -->
+      <div class="branch">
+        <div class="stub"></div>
+        <div class="node mini" style="--c:var(--prog)">
+          <div class="hd">
+            <div class="badge">4</div>
+            <span class="team">رئيس كنترول البرنامج</span>
+            <div class="title">مسار الجداول واللجان</div>
+          </div>
+          <ul class="steps">
+            <li>استلام الجداول من رئيس الكنترول المركزي</li>
+            <li>تنسيق فترات وأماكن لجان الامتحان</li>
+            <li>توزيع الطلاب على المجموعات واللجان</li>
+            <li class="out">تجهيز كشوف الحضور والغياب للجان</li>
+          </ul>
+        </div>
+        <div class="tail"></div>
+      </div>
+
+      <!-- مسار IT المعدل -->
+      <div class="branch">
+        <div class="stub"></div>
+        <div class="node mini" style="--c:var(--it)">
+          <div class="hd">
+            <div class="badge">5</div>
+            <span class="team">فريق IT</span>
+            <div class="title">مسار الـ IT ووثائق الإجابة</div>
+          </div>
+          <ul class="steps">
+            <li>استلام الـ Database الخاصة بالطلبة من رئيس الكنترول المركزي</li>
+            <li>تجهيز ورق إجابة الـ Bubble Sheet وطباعته</li>
+            <li>تجهيز ورق إجابة المقالي وطباعته</li>
+            <li class="out">تسليمه لفريق التختيم والتظريف</li>
+          </ul>
+        </div>
+        <div class="tail"></div>
+      </div>
+    </div>
+    <div class="bus"></div>
+    <div class="arrow short"></div>
+
+    <!-- 4. فريق التختيم والتظريف -->
+    <div class="node" style="--c:var(--stamp)">
+      <div class="hd">
+        <div class="badge">6</div>
+        <span class="team">فريق التختيم والتظريف</span>
+        <div class="title">ختم وتظريف ورق الأسئلة والبابل شيت والمقالي</div>
+      </div>
+      <ul class="tasks">
+        <li>استلام ورق الأسئلة من رئيس كنترول البرنامج، وأوراق البابل شيت والمقالي من فريق IT.</li>
+        <li>ختم جميع أوراق الامتحان بالأختام الرسمية المعتمدة للكنترول.</li>
+        <li>تظريف الأوراق وإحكام غلقها وفقًا للمادة، الفرقة، واللجنة/المجموعة.</li>
+        <li>تسليم الأظرف المؤمنة لفريق التسليم والتسلم قبل موعد بدء اللجنة.</li>
+      </ul>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- محطة انتقالية: انعقاد الامتحان -->
+    <div class="node milestone">
+      انعقاد الامتحان
+      <small>العملية الامتحانية داخل اللجان — إشراف المراقبين والملاحظين</small>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 5. فريق التسليم والتسلم بعد الامتحان -->
+    <div class="node" style="--c:var(--deliv)">
+      <div class="hd">
+        <div class="badge">7</div>
+        <span class="team">فريق التسليم والتسلم</span>
+        <div class="title">إدارة الأظرف والمراقبين وفرز الأوراق بعد الامتحان</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>استلام أظرف الامتحان وترتيبها وفقًا لأماكن اللجان.</li>
+        <li>تجهيز أوامر التسليم من العملية الامتحانية للمراقبين.</li>
+        <li>تسليم أظرف الامتحان لكل مراقب وفقًا لتوزيعه في الجدول.</li>
+        <li>استلام ورق الامتحانات ومطابقتها مع كشف الحضور.</li>
+        <li>فصل أوراق إجابات الـ Bubble Sheet عن المقالي.</li>
+        <li>تسليم أوراق إلى فريق الـ IT.</li>
+      </ul>
+    </div>
+    <div class="arrow short"></div>
+
+    <!-- نقطة قرار 1 -->
+    <div class="decision">
+      <div class="sp"></div>
+      <div class="diamond"><span>هل الأعداد مطابقة لكشوف الحضور؟</span></div>
+      <div class="nopath">
+        <div class="hline"></div>
+        <span class="lbl">لا</span>
+        <div class="box">
+          <b>إعادة المطابقة والحصر</b>
+          حصر دقيق مع رئيس اللجنة وتوثيق أي نقص أو غياب بمحضر رسمي قبل الاستلام ↺
+        </div>
+      </div>
+    </div>
+    <div class="arrow" data-l="نعم — تسليم الأوراق المفروزة لفريق IT"></div>
+
+    <!-- 6. فريق الـ IT المدمج (سكان + ريمارك) -->
+    <div class="node" style="--c:var(--it)">
+      <div class="hd">
+        <div class="badge">8</div>
+        <span class="team">فريق الـ IT (السكان والريمارك)</span>
+        <div class="title">سحب الأوراق، الفحص، والتصحيح الإلكتروني</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>استلام أوراق الإجابات من فريق التسليم والتسلم.</li>
+        <li>سحب أوراق الـ Bubble والمقالي سكانر.</li>
+        <li>التأكد من أن أعداد الأوراق التي تم سحبها مطابقة للذي تم استلامه.</li>
+        <li>تسليم أوراق المقالي لرئيس الكنترول لرفعها على الـ System (رئيس الكنترول المركزي).</li>
+        <li>رفع أوراق الـ Bubble على الـ Remark أو السيستم.</li>
+        <li>البدء في تصحيح أوراق البابل ورفع نتائج التصحيح لرئيس الكنترول للبرنامج.</li>
+      </ul>
+    </div>
+    <div class="arrow short"></div>
+
+    <!-- نقطة قرار 2 -->
+    <div class="decision">
+      <div class="sp"></div>
+      <div class="diamond"><span>هل الأوراق المسحوبة مطابقة وسليمة؟</span></div>
+      <div class="nopath">
+        <div class="hline"></div>
+        <span class="lbl">لا</span>
+        <div class="box">
+          <b>إعادة السحب والتدقيق</b>
+          إعادة مسح الأوراق غير الواضحة أو الناقصة ومعالجة أخطاء التغذية فورًا ↺
+        </div>
+      </div>
+    </div>
+    <div class="arrow" data-l="نعم — تسليم المقالي للمركزي والبدء بالتصحيح الإلكتروني"></div>
+
+    <!-- 7. مرحلة رئيس الكنترول للبرنامج -->
+    <div class="node" style="--c:var(--prog)">
+      <div class="hd">
+        <div class="badge">9</div>
+        <span class="team">رئيس كنترول البرنامج</span>
+        <div class="title">متابعة ومراجعة النتائج والتدقيق وتجهيز التسليم للمركزي</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>استلام نتائج تصحيح أوراق البابل من الـ IT.</li>
+        <li>متابعة رفع أوراق المقالي على السيستم ومراجعة الأوراق وتدقيق رصدها.</li>
+        <li>تسليم النتائج المجمعة والمراجعة لرئيس الكنترول المركزي.</li>
+      </ul>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 8. المرحلة الأخيرة لرئيس الكنترول المركزي -->
+    <div class="node" style="--c:var(--central)">
+      <div class="hd">
+        <div class="badge">10</div>
+        <span class="team">رئيس الكنترول المركزي</span>
+        <div class="title">المرحلة الختامية: إدارة المقالي، الاعتمادات، وإعلان النتيجة</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>رفع المقالي على السيستم بالتعاون مع رئيس البرنامج.</li>
+        <li>تسليم أعضاء هيئة التدريس إجابات المقالي للتصحيح.</li>
+        <li>متابعة استلام أوراق إجابات المقالي وفقًا للمواعيد المقررة.</li>
+        <li>مراجعة النتيجة المتضمنة درجات المقالي ودرجات البابل وأعمال السنة من أعضاء هيئة التدريس.</li>
+        <li>اعتماد النتيجة ومراجعتها لجميع البرامج.</li>
+        <li>طباعة النتيجة لاعتمادها من العميد.</li>
+        <li>تجهيز النتيجة لإرسالها لاعتمادها من الوزارة.</li>
+        <li>وأخيرًا إعلان النتيجة.</li>
+      </ul>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- النهاية -->
+    <div class="node terminal" style="--c:var(--ok)">
+      إعلان النتيجة النهائية للطلاب
+      <small>${p.name} — نتيجة معتمدة وموثقة رسميًا</small>
+    </div>
+  </div>`;
+}
+
+function unifiedFlow(){
+  return `
+  <div class="prog" style="--p:var(--central)">
+    <div>
+      <h2>المخطط العام الشامل لدورة عمل الكنترول</h2>
+      <div class="sub">منظومة موحدة للكنترول المركزي والبرامج الثلاثة (نظم المعلومات · التجارة الخارجية · المحاسبة)</div>
+    </div>
+    <div class="chief">
+      <small>القيادة العامة للكنترول</small>
+      <b>رئيس الكنترول المركزي</b>
+    </div>
+  </div>
+
+  <div class="flow">
+    <!-- البداية -->
+    <div class="node terminal" style="--c:var(--central)">
+      انطلاق دورة عمل الامتحانات الشاملة
+      <small>التنسيق بين الكنترول المركزي ورؤساء كنترول البرامج الثلاثة</small>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 1. رئيس الكنترول المركزي -->
+    <div class="node" style="--c:var(--central)">
+      <div class="hd">
+        <div class="badge">1</div>
+        <span class="team">رئيس الكنترول المركزي</span>
+        <div class="title">إطلاق الدورة والإشراف العام والتنسيق مع البرامج</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>متابعة طباعات الأسئلة والاستقبال من البرامج الثلاثة.</li>
+        <li>تزويد فريق IT بقاعدة بيانات الطلاب (Database) المركزية المعتمدة.</li>
+        <li>تسليم وتوزيع جداول الامتحانات العامة لرؤساء كنترول البرامج.</li>
+      </ul>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 2. رؤساء كنترول البرامج -->
+    <div class="node" style="--c:var(--prog)">
+      <div class="hd">
+        <div class="badge">2</div>
+        <span class="team">رؤساء كنترول البرامج الثلاثة</span>
+        <div class="title">استقبال المتطلبات من الرئيس المركزي وتجهيز الطباعة والجداول</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>استقبال أسئلة مواد البرامج من الرئيس المركزي وتجهيزها للطباعة.</li>
+        <li>استلام الجداول من الرئيس المركزي وتنسيق فترات وأماكن الامتحانات.</li>
+        <li>توزيع طلاب كل برنامج إلى مجموعات ولجان وفق الجداول المعتمدة.</li>
+      </ul>
+    </div>
+    <div class="arrow short"></div>
+    <div class="bus"></div>
+
+    <!-- المسارات الثلاثة -->
+    <div class="split">
+      <div class="branch">
+        <div class="stub"></div>
+        <div class="node mini" style="--c:var(--prog)">
+          <div class="hd">
+            <div class="badge">3</div>
+            <span class="team">رؤساء البرامج</span>
+            <div class="title">مسار الأسئلة</div>
+          </div>
+          <ul class="steps">
+            <li>استقبال أسئلة المواد من الرئيس المركزي</li>
+            <li>تنسيق الأسئلة ومراجعتها</li>
+            <li>طباعة الأسئلة بأعداد اللجان</li>
+            <li class="out">تسليم ورق الأسئلة للتختيم والتظريف</li>
+          </ul>
+        </div>
+        <div class="tail"></div>
+      </div>
+
+      <div class="branch">
+        <div class="stub"></div>
+        <div class="node mini" style="--c:var(--prog)">
+          <div class="hd">
+            <div class="badge">4</div>
+            <span class="team">رؤساء البرامج</span>
+            <div class="title">مسار الجداول واللجان</div>
+          </div>
+          <ul class="steps">
+            <li>استلام الجداول من الرئيس المركزي</li>
+            <li>تنسيق اللجان وتوزيع المجموعات</li>
+            <li>إعداد كشوف المناداة والحضور</li>
+            <li class="out">اعتماد جداول ومقار اللجان</li>
+          </ul>
+        </div>
+        <div class="tail"></div>
+      </div>
+
+      <div class="branch">
+        <div class="stub"></div>
+        <div class="node mini" style="--c:var(--it)">
+          <div class="hd">
+            <div class="badge">5</div>
+            <span class="team">فريق IT</span>
+            <div class="title">مسار الـ IT ووثائق الإجابة</div>
+          </div>
+          <ul class="steps">
+            <li>استلام الـ Database من رئيس الكنترول المركزي</li>
+            <li>تجهيز ورق إجابة الـ Bubble Sheet وطباعته</li>
+            <li>تجهيز ورق إجابة المقالي وطباعته</li>
+            <li class="out">تسليمه لفريق التختيم والتظريف</li>
+          </ul>
+        </div>
+        <div class="tail"></div>
+      </div>
+    </div>
+    <div class="bus"></div>
+    <div class="arrow short"></div>
+
+    <!-- 4. فريق التختيم والتظريف -->
+    <div class="node" style="--c:var(--stamp)">
+      <div class="hd">
+        <div class="badge">6</div>
+        <span class="team">فريق التختيم والتظريف</span>
+        <div class="title">ختم وتظريف ورق الأسئلة والبابل شيت والمقالي</div>
+      </div>
+      <ul class="tasks">
+        <li>استلام ورق الأسئلة من رؤساء البرامج، وأوراق البابل شيت والمقالي من فريق IT.</li>
+        <li>ختم جميع الأوراق بالأختام الرسمية المعتمدة للكنترول لجميع البرامج.</li>
+        <li>تظريف الأوراق وإحكام غلقها وتشفيرها بحسب البرنامج والمادة واللجنة.</li>
+        <li>تسليم الأظرف المؤمنة والمشمعة لفريق التسليم والتسلم قبل انعقاد الامتحان.</li>
+      </ul>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- محطة انعقاد الامتحان -->
+    <div class="node milestone">
+      انعقاد الامتحان
+      <small>العملية الامتحانية داخل اللجان — إشراف المراقبين والملاحظين لجميع البرامج</small>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 5. فريق التسليم والتسلم -->
+    <div class="node" style="--c:var(--deliv)">
+      <div class="hd">
+        <div class="badge">7</div>
+        <span class="team">فريق التسليم والتسلم</span>
+        <div class="title">إدارة الأظرف والمراقبين وفرز الأوراق بعد الامتحان</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>استلام أظرف الامتحان وترتيبها وفقًا لأماكن اللجان.</li>
+        <li>تجهيز أوامر التسليم من العملية الامتحانية للمراقبين.</li>
+        <li>تسليم أظرف الامتحان لكل مراقب وفقًا لتوزيعه في الجدول.</li>
+        <li>استلام ورق الامتحانات ومطابقتها مع كشف الحضور.</li>
+        <li>فصل أوراق إجابات الـ Bubble Sheet عن المقالي.</li>
+        <li>تسليم أوراق إلى فريق الـ IT.</li>
+      </ul>
+    </div>
+    <div class="arrow short"></div>
+
+    <!-- نقطة قرار 1 -->
+    <div class="decision">
+      <div class="sp"></div>
+      <div class="diamond"><span>هل الأعداد مطابقة لكشوف الحضور؟</span></div>
+      <div class="nopath">
+        <div class="hline"></div>
+        <span class="lbl">لا</span>
+        <div class="box">
+          <b>إعادة المطابقة والحصر</b>
+          حصر ومراجعة الأوراق مع رئيس اللجنة وتوثيق حالات الغياب بمحضر رسمي قبل الاستلام ↺
+        </div>
+      </div>
+    </div>
+    <div class="arrow" data-l="نعم — تسليم الأوراق المفروزة لفريق IT"></div>
+
+    <!-- 6. فريق الـ IT المدمج (سكان + ريمارك) -->
+    <div class="node" style="--c:var(--it)">
+      <div class="hd">
+        <div class="badge">8</div>
+        <span class="team">فريق الـ IT (السكان والريمارك)</span>
+        <div class="title">سحب الأوراق ضوئيًا، التدقيق، والتصحيح الإلكتروني</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>استلام أوراق الإجابات من فريق التسليم والتسلم.</li>
+        <li>سحب أوراق الـ Bubble والمقالي سكانر.</li>
+        <li>التأكد من أن أعداد الأوراق التي تم سحبها مطابقة للذي تم استلامه.</li>
+        <li>تسليم أوراق المقالي لرئيس الكنترول لرفعها على الـ System (رئيس الكنترول المركزي).</li>
+        <li>رفع أوراق الـ Bubble على الـ Remark أو السيستم.</li>
+        <li>البدء في تصحيح أوراق البابل ورفع نتائج التصحيح لرئيس الكنترول للبرنامج.</li>
+      </ul>
+    </div>
+    <div class="arrow short"></div>
+
+    <!-- نقطة قرار 2 -->
+    <div class="decision">
+      <div class="sp"></div>
+      <div class="diamond"><span>هل الأوراق المسحوبة مطابقة وسليمة؟</span></div>
+      <div class="nopath">
+        <div class="hline"></div>
+        <span class="lbl">لا</span>
+        <div class="box">
+          <b>إعادة السحب والمعالجة</b>
+          إعادة مسح الأوراق غير الواضحة أو الناقصة ومعالجة أخطاء التغذية فورًا ↺
+        </div>
+      </div>
+    </div>
+    <div class="arrow" data-l="نعم — تسليم المقالي للمركزي والبدء بالتصحيح الإلكتروني"></div>
+
+    <!-- 7. مرحلة رؤساء كنترول البرامج -->
+    <div class="node" style="--c:var(--prog)">
+      <div class="hd">
+        <div class="badge">9</div>
+        <span class="team">رؤساء كنترول البرامج الثلاثة</span>
+        <div class="title">متابعة ومراجعة النتائج والتدقيق وتجهيز التسليم للمركزي</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>استلام نتائج تصحيح أوراق البابل من الـ IT لكل برنامج.</li>
+        <li>متابعة رفع أوراق المقالي على السيستم ومراجعة الأوراق وتدقيق رصدها.</li>
+        <li>تسليم النتائج المجمعة والمراجعة لرئيس الكنترول المركزي.</li>
+      </ul>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- 8. المرحلة الأخيرة لرئيس الكنترول المركزي -->
+    <div class="node" style="--c:var(--central)">
+      <div class="hd">
+        <div class="badge">10</div>
+        <span class="team">رئيس الكنترول المركزي</span>
+        <div class="title">المرحلة الختامية: إدارة المقالي، الاعتمادات، وإعلان النتيجة</div>
+      </div>
+      <ul class="tasks numbered">
+        <li>رفع المقالي على السيستم بالتعاون مع رئيس البرنامج.</li>
+        <li>تسليم أعضاء هيئة التدريس إجابات المقالي للتصحيح.</li>
+        <li>متابعة استلام أوراق إجابات المقالي وفقًا للمواعيد المقررة.</li>
+        <li>مراجعة النتيجة المتضمنة درجات المقالي ودرجات البابل وأعمال السنة من أعضاء هيئة التدريس.</li>
+        <li>اعتماد النتيجة ومراجعتها لجميع البرامج.</li>
+        <li>طباعة النتيجة لاعتمادها من العميد.</li>
+        <li>تجهيز النتيجة لإرسالها لاعتمادها من الوزارة.</li>
+        <li>وأخيرًا إعلان النتيجة.</li>
+      </ul>
+    </div>
+    <div class="arrow"></div>
+
+    <!-- النهاية -->
+    <div class="node terminal" style="--c:var(--ok)">
+      إعلان النتائج النهائية لجميع البرامج
+      <small>اعتماد شامل من سيادة العميد والوزارة</small>
+    </div>
+  </div>`;
+}
+
+function roles(){
+  const card = (c,t,sub,body) => `<div class="role" style="--c:${c}"><div class="rh"><h3>${t}</h3><small>${sub}</small></div><div class="rb">${body}</div></div>`;
+  const tasks = (arr, num=false) => `<ul class="tasks ${num?'numbered':''}" style="--c:inherit">${arr.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+  
+  return `
+  <div class="prog" style="--p:var(--central)">
+    <div>
+      <h2>بطاقات التوصيف الوظيفي للفرق والقيادات</h2>
+      <div class="sub">تحديد دقيق ومؤسسي لمهام كل دور ومسؤولياته في دورة عمل الكنترول دون أسماء شخصية</div>
+    </div>
+    <div class="chief">
+      <small>المرجعية التنظيمية</small>
+      <b>لائحة الكنترول المعتمدة</b>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- بطاقة رئيس الكنترول المركزي -->
+    ${card("var(--central)","رئيس الكنترول المركزي","القيادة العامة والإشراف والتنسيق لجميع البرامج والاعتماد النهائي",
+      `<h4>المهام والاختصاصات</h4>
+       <div style="--c:var(--central)">
+         ${tasks([
+           "متابعة طباعات الأسئلة والاستقبال من البرامج الثلاثة.",
+           "تزويد مسار الـ IT بقاعدة بيانات الطلاب (Database) المعتمدة.",
+           "تسليم وتوزيع جداول الامتحانات المعتمدة لرؤساء كنترول البرامج.",
+           "استلام أوراق المقالي من فريق الـ IT ورفعها على السيستم بالتعاون مع رئيس البرنامج.",
+           "تسليم أعضاء هيئة التدريس إجابات المقالي للتصحيح.",
+           "متابعة استلام أوراق إجابات المقالي وفقًا للمواعيد المقررة.",
+           "مراجعة النتيجة المتضمنة درجات المقالي ودرجات البابل وأعمال السنة من أعضاء هيئة التدريس.",
+           "اعتماد النتيجة ومراجعتها لجميع البرامج الأكاديمية.",
+           "طباعة النتيجة لاعتمادها رسميًا من سيادة العميد.",
+           "تجهيز النتيجة لإرسالها لاعتمادها من الوزارة.",
+           "إعلان النتيجة النهائية للطلاب."
+         ])}
+       </div>`)}
+
+    <!-- بطاقة رئيس كنترول البرنامج -->
+    ${card("var(--prog)","رئيس كنترول البرنامج","مسؤول الكنترول بكل برنامج (نظم المعلومات / التجارة الخارجية / المحاسبة)",
+      `<h4>المهام والاختصاصات</h4>
+       <div style="--c:var(--prog)">
+         ${tasks([
+           "استقبال ملفات الأسئلة من رئيس الكنترول المركزي وتجهيزها للطباعة.",
+           "استلام جداول الامتحانات من رئيس الكنترول المركزي وتنسيق اللجان.",
+           "توزيع طلاب البرنامج إلى مجموعات ولجان وإعداد كشوف الحضور والغياب.",
+           "الإشراف على طباعة ورق الأسئلة وتسليمه لفريق التختيم والتظريف.",
+           "استلام نتائج تصحيح أوراق البابل من فريق الـ IT.",
+           "متابعة رفع أوراق المقالي على السيستم ومراجعة الأوراق وتدقيق رصدها.",
+           "تسليم النتائج المجمعة والمراجعة لرئيس الكنترول المركزي."
+         ])}
+       </div>`)}
+
+    <!-- بطاقة فريق الـ IT المدمج -->
+    ${card("var(--it)","فريق الـ IT","دمج مهام الـ Database والسكان والرادار والتصحيح الإلكتروني (Remark)",
+      `<h4>المهام والاختصاصات</h4>
+       <div style="--c:var(--it)">
+         ${tasks([
+           "استلام الـ Database الخاصة بالطلبة من رئيس الكنترول المركزي.",
+           "تجهيز ورق إجابة الـ Bubble Sheet وطباعته وفق بيانات الطلاب والمقررات.",
+           "تجهيز ورق إجابة المقالي وطباعته وتسليمه لفريق التختيم والتظريف.",
+           "استلام أوراق الإجابات بعد الامتحان من فريق التسليم والتسلم.",
+           "سحب أوراق الـ Bubble والمقالي سكانر بدقة وجودة عالية.",
+           "التأكد من أن أعداد الأوراق التي تم سحبها مطابقة للذي تم استلامه.",
+           "تسليم أوراق المقالي لرئيس الكنترول المركزي لرفعها على الـ System.",
+           "رفع أوراق الـ Bubble على الـ Remark أو السيستم.",
+           "البدء في تصحيح أوراق البابل ورفع نتائج التصحيح لرئيس الكنترول للبرنامج."
+         ])}
+       </div>`)}
+
+    <!-- بطاقة فريق التختيم والتظريف -->
+    ${card("var(--stamp)","فريق التختيم والتظريف","التأمين المادي وتجهيز وتشفير أوراق الامتحان قبل انعقاد اللجان",
+      `<h4>المهام والاختصاصات</h4>
+       <div style="--c:var(--stamp)">
+         ${tasks([
+           "استلام ورق الأسئلة من رئيس كنترول البرنامج.",
+           "استلام أوراق إجابات البابل شيت والمقالي من فريق الـ IT.",
+           "ختم كافة أوراق الامتحانات (الأسئلة + البابل + المقالي) بالأختام الرسمية المعتمدة.",
+           "تظريف الأوراق وإحكام غلقها وفقًا للبرنامج، المادة، واللجنة/المجموعة.",
+           "تسليم الأظرف المؤمنة والمشمعة لفريق التسليم والتسلم قبل موعد اللجان."
+         ])}
+       </div>`)}
+
+    <!-- بطاقة فريق التسليم والتسلم -->
+    ${card("var(--deliv)","فريق التسليم والتسلم","إدارة حركة الأظرف وتوزيعها للمراقبين، الاستلام بعد الامتحان، والفرز",
+      `<h4>المهام والاختصاصات (وفق الترتيب الإجرائي الإلزامي)</h4>
+       <div style="--c:var(--deliv)">
+         ${tasks([
+           "استلام أظرف الامتحان وترتيبها وفقًا لأماكن اللجان.",
+           "تجهيز أوامر التسليم من العملية الامتحانية للمراقبين.",
+           "تسليم أظرف الامتحان لكل مراقب وفقًا لتوزيعه في الجدول.",
+           "استلام ورق الامتحانات ومطابقتها مع كشف الحضور.",
+           "فصل أوراق إجابات الـ Bubble Sheet عن المقالي.",
+           "تسليم الأوراق إلى فريق الـ IT."
+         ], true)}
+       </div>`)}
+  </div>
+
+  <h2 class="section-title">مصفوفة توزيع المهام والمسؤوليات (RACI Matrix)</h2>
+  <p class="section-sub">تتبع مسار الأوراق والمعلومات عبر كافة مراحل دورة العمل الامتحانية</p>
+  
+  <table class="matrix">
+    <thead>
+      <tr>
+        <th style="width:16%">المرحلة الامتحانية</th>
+        <th style="width:18%">الجهة المسؤولة</th>
+        <th style="width:36%">المهام والأنشطة المنفذة</th>
+        <th style="width:15%">الاستلام من</th>
+        <th style="width:15%">التسليم إلى</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>1. انطلاق الدورة والأسئلة</b></td>
+        <td><span class="tag" style="--c:var(--central)">رئيس الكنترول المركزي</span></td>
+        <td>استقبال ومتابعة طباعات الأسئلة من البرامج، وتوفير الـ Database المركزية والجداول العامة.</td>
+        <td>البرامج الأكاديمية</td>
+        <td>رؤساء البرامج + فريق IT</td>
+      </tr>
+      <tr>
+        <td><b>2. التجهيز البرامجي</b></td>
+        <td><span class="tag" style="--c:var(--prog)">رئيس كنترول البرنامج</span></td>
+        <td>تجهيز وطباعة الأسئلة، تنسيق الجداول وتوزيع المجموعات واللجان، إعداد كشوف الحضور.</td>
+        <td>رئيس الكنترول المركزي</td>
+        <td>فريق التختيم والتظريف</td>
+      </tr>
+      <tr>
+        <td><b>3. تجهيز أوراق الإجابات</b></td>
+        <td><span class="tag" style="--c:var(--it)">فريق الـ IT</span></td>
+        <td>تجهيز وطباعة ورق إجابات الـ Bubble Sheet وورق إجابات المقالي بأكواد الطلاب.</td>
+        <td>رئيس الكنترول المركزي</td>
+        <td>فريق التختيم والتظريف</td>
+      </tr>
+      <tr>
+        <td><b>4. التختيم والتظريف</b></td>
+        <td><span class="tag" style="--c:var(--stamp)">فريق التختيم والتظريف</span></td>
+        <td>ختم وتظريف وتأمين وتشميع أظرف الأسئلة والبابل شيت والمقالي بحسب اللجان.</td>
+        <td>رئيس البرنامج + فريق IT</td>
+        <td>فريق التسليم والتسلم</td>
+      </tr>
+      <tr>
+        <td><b>5. إدارة اللجان والمراقبين</b></td>
+        <td><span class="tag" style="--c:var(--deliv)">فريق التسليم والتسلم</span></td>
+        <td>ترتيب الأظرف وفق اللجان، تجهيز أوامر التسليم، وتسليم الأظرف للمراقبين وفق الجدول.</td>
+        <td>فريق التختيم والتظريف</td>
+        <td>المراقبون باللجان</td>
+      </tr>
+      <tr>
+        <td><b>6. الاستلام والفرز بعد الامتحان</b></td>
+        <td><span class="tag" style="--c:var(--deliv)">فريق التسليم والتسلم</span></td>
+        <td>استلام ورق الامتحانات، مطابقتها مع كشوف الحضور، فصل البابل شيت عن المقالي، والتسليم للـ IT.</td>
+        <td>المراقبون باللجان</td>
+        <td>فريق الـ IT</td>
+      </tr>
+      <tr>
+        <td><b>7. السحب والتصحيح الإلكتروني</b></td>
+        <td><span class="tag" style="--c:var(--it)">فريق الـ IT</span></td>
+        <td>سحب البابل والمقالي سكانر، التحقق من مطابقة الأعداد، تسليم المقالي للمركزي، تصحيح البابل على Remark.</td>
+        <td>فريق التسليم والتسلم</td>
+        <td>الرئيس المركزي + رئيس البرنامج</td>
+      </tr>
+      <tr>
+        <td><b>8. التدقيق البرامجي</b></td>
+        <td><span class="tag" style="--c:var(--prog)">رئيس كنترول البرنامج</span></td>
+        <td>استلام نتائج البابل من الـ IT، متابعة ومراجعة رفع المقالي على السيستم، تسليم النتائج للمركزي.</td>
+        <td>فريق الـ IT</td>
+        <td>رئيس الكنترول المركزي</td>
+      </tr>
+      <tr>
+        <td><b>9. إدارة المقالي والاعتمادات</b></td>
+        <td><span class="tag" style="--c:var(--central)">رئيس الكنترول المركزي</span></td>
+        <td>رفع المقالي بالتعاون مع رئيس البرنامج، تسليم الأساتذة ومتابعة التصحيح، تجميع ومراجعة الدرجات، اعتماد العميد والوزارة، وإعلان النتيجة.</td>
+        <td>فريق IT + رؤساء البرامج + أعضاء التدريس</td>
+        <td>العميد + الوزارة + الطلاب</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="notes">
+    <h4><i style="color:var(--central)">✦</i> محددات الحوكمة وضوابط الجودة في دورة الكنترول</h4>
+    <ul>
+      <li><b>الفصل الوظيفي والتكامل المركزي:</b> يشرف رئيس الكنترول المركزي إشرافًا شاملاً على تدفق البيانات والجداول وطباعة الأسئلة ورفع المقالي والاعتماد النهائي، بينما يتولى رئيس كنترول كل برنامج المتابعة الدقيقة والمراجعة المباشرة لمقررات برنامجه.</li>
+      <li><b>دمج مهام الـ IT:</b> دمج فريقي السكان وريمارك تحت مسمى «فريق الـ IT» يضمن وحدة المسؤولية التقنية بدءًا من سحب قاعدة البيانات وطباعة أوراق الإجابة، مرورًا بالسحب الضوئي (Scanner)، ومطابقة الأعداد، وانتهاءً بالتصحيح الإلكتروني على نظام Remark.</li>
+      <li><b>نظام الفرز الفوري للمقالي والبابل:</b> يتولى فريق التسليم والتسلم فور انتهاء الامتحان مطابقة الأوراق وفصل البابل شيت عن المقالي، بما يضمن سرعة توجيه مسار التصحيح الإلكتروني بالتوازي مع مسار رفع وتصحيح المقالي.</li>
+      <li><b>محطات التحقق الإلزامية (Gateways):</b> لا تنتقل الأوراق بين المراحل إلا بمحاضر مطابقة رسمية؛ التحقق الأول بمطابقة أعداد أوراق الإجابة مع كشوف الحضور، والتحقق الثاني بالتأكد التام من مطابقة الأعداد المسحوبة ضوئيًا مع ما تم استلامه.</li>
+      <li><b>سلسلة الاعتماد النهائية:</b> تتضمن المراجعة المركزية الشاملة درجات البابل المقروءة آليًا، ودرجات المقالي المصححة بمعرفة أعضاء هيئة التدريس، ودرجات أعمال السنة، قبل توقيع واعتماد العميد وتوثيق الوزارة وإعلان النتيجة رسميًا.</li>
+    </ul>
+  </div>`;
+}
+
+const VIEWS = [
+  {id:"main", label:"المخطط العام الشامل", code:"ALL", color:"#312e81", html:unifiedFlow()},
+  ...PROGRAMS.map(p=>({id:p.id, label:p.name.replace("برنامج ",""), code:p.code, color:p.color, html:flow(p)})),
+  {id:"roles", label:"الأدوار والمسؤوليات", code:"ROLES", color:"#0f172a", html:roles()}
+];
+
+document.getElementById("main").innerHTML = VIEWS.map(v=>`<section class="view" id="v-${v.id}">${v.html}</section>`).join("");
+document.getElementById("tabs").innerHTML = VIEWS.map(v=>`<a href="#${v.id}" data-id="${v.id}" style="--a:${v.color}">${v.label}<span class="code">${v.code}</span></a>`).join("");
+
+function show(){
+  const id = (location.hash||"#main").slice(1);
+  const target = VIEWS.find(x=>x.id===id) ? id : "main";
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("show", s.id==="v-"+target));
+  document.querySelectorAll("#tabs a").forEach(a=>a.classList.toggle("active", a.dataset.id===target));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener("hashchange", show);
+show();
+</script>
+</body>
+</html>
